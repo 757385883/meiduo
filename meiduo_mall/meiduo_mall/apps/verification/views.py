@@ -9,4 +9,8 @@ class ImageCodeView(APIView):
 
     def get(self,request,image_code_id):
         """提供图片验证码"""
-        pass
+        # 生成图片验证码的内容和图片
+
+        # 将内容和uuid存储到redis
+
+        #将图片相应给用户

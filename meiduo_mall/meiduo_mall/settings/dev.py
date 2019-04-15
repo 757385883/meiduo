@@ -51,6 +51,9 @@ INSTALLED_APPS = [
     # 找到自定义模型类，所以需要在注册时以users 开头
     # 但是这样注册用户模块系统又无法通过路径直接找到users，
     # 所以要追加导包路径
+    #
+    #注册验证模块
+    'verifications.apps.UsersConfig',
 ]
 
 MIDDLEWARE = [
@@ -109,6 +112,14 @@ CACHES = {
     "session": {
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": "redis://192.168.0.6:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+    # 指定redis中的2号数据库存储验证码相关的信息
+    "verify_codes": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://192.168.0.6:6379/2",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }

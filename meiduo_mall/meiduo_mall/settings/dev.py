@@ -11,11 +11,17 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+import sys
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# 追加导包路径，让项目可以找到子应用 users模块
+print(BASE_DIR) #C:\Users\lz\PycharmProject\meiduo\meiduo_mall\meiduo_mall
+#
+sys.path.insert(0,os.path.join(BASE_DIR,'apps'))
 
-
+# 查看导包路径 ['C:\\Users\\lz\\PycharmProject\\meiduo\\meiduo_mall', 'C:\\Users\\lz\\PycharmProject\\meiduo', 'C:\\Users\\lz\\Desktop\\新建文件夹\\python37.zip', 'C:\\Users\\lz\\Desktop\\新建文件夹\\DLLs', 'C:\\Users\\lz\\Desktop\\新建文件夹\\lib', 'C:\\Users\\lz\\Desktop\\新建文件夹', 'C:\\Users\\lz\\Desktop\\新建文件夹\\lib\\site-packages', 'C:\\Users\\lz\\Desktop\\新建文件夹\\lib\\site-packages\\setuptools-40.8.0-py3.7.egg', 'C:\\Users\\lz\\Desktop\\新建文件夹\\lib\\site-packages\\pymysql-0.9.3-py3.7.egg', 'C:\\Users\\lz\\Desktop\\新建文件夹\\lib\\site-packages\\pip-19.0.3-py3.7.egg', 'C:\\Program Files\\JetBrains\\PyCharm 2018.3.2\\helpers\\pycharm_matplotlib_backend']
+print(sys.path)
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
@@ -32,13 +38,19 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'django.contrib.admin',
-    'django.contrib.auth',
+    'django.contrib.auth',  # 用户系统认证
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'rest_framework'
+    'rest_framework',
+
+    # 注册用户模块
+    'users.apps.UsersConfig', # 为了适应AUTH_USER_MODEL，
+    # 找到自定义模型类，所以需要在注册时以users 开头
+    # 但是这样注册用户模块系统又无法通过路径直接找到users，
+    # 所以要追加导包路径
 ]
 
 MIDDLEWARE = [
@@ -184,3 +196,15 @@ LOGGING = {
         },
     }
 }
+
+#DRF 要让django 知道，自己配置的自定义的异常处理在哪里
+REST_FRAMEWORK = {
+    # 异常处理 exception_handler 是自己自定义的异常处理函数
+    'EXCEPTION_HANDLER': 'meiduo_mall.utils.exceptions.exception_handler',
+
+
+}
+
+# 指定User模型类为django 项目中的用户认证的系统中的模型类
+# 固定写法：应用.模型类'users.User'
+AUTH_USER_MODEL = 'users.User'

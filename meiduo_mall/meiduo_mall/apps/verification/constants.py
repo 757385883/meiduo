@@ -1,3 +1,5 @@
 # 图片验证码有效期
 
 IMAGE_CODE_REDIS_EXPIRES = 300
+
+SMS_FLAG_TIME = 60

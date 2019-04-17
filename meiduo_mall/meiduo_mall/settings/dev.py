@@ -12,8 +12,10 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 import sys
-
+import datetime
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # 追加导包路径，让项目可以找到子应用 users模块
 print(BASE_DIR) #C:\Users\lz\PycharmProject\meiduo\meiduo_mall\meiduo_mall
@@ -219,7 +221,22 @@ LOGGING = {
 REST_FRAMEWORK = {
     # 异常处理 exception_handler 是自己自定义的异常处理函数
     'EXCEPTION_HANDLER': 'meiduo_mall.utils.exceptions.exception_handler',
+    #认证，读取用户的身份信息，判断当前的登录用户是否是本网站的用户
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+            'rest_framework_jwt.authentication.JSONWebTokenAuthentication', # JWT 认证
+            # session机制认证
+            'rest_framework.authentication.SessionAuthentication',
+            #基础认证
+            'rest_framework.authentication.BasicAuthentication',
+        ),
 
+}
+# JWT 配置
+JWT_AUTH = {
+    # 配置状态保持的时间 。第一天
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),
+    # 配置重写的返回数据的的函数的位置
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'users.utils.jwt_response_payload_handler',
 
 }
 

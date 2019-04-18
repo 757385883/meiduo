@@ -57,8 +57,9 @@ INSTALLED_APPS = [
     # 但是这样注册用户模块系统又无法通过路径直接找到users，
     # 所以要追加导包路径
     #
-    #注册验证模块
-    'verifications.apps.UsersConfig',
+    #注册第三方QQ登
+    # 录
+    'oauth.apps.OauthConfig',
 
     'corsheaders',
 ]

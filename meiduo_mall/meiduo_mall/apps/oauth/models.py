@@ -2,8 +2,11 @@ from django.db import models
 
 # Create your models here.
 from django.db import models
-from meiduo_mall.utils.models import BaseModel
+
 # 创建qq登录模型类
+
+from .utils import BaseModel
+
 class OAuthQQUser(BaseModel):
     """
     QQ登录用户数据

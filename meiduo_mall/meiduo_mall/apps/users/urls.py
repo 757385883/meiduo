@@ -10,5 +10,8 @@ urlpatterns = [
     # JWT 实现登录认证功能，obtain_jwt_token就实现了登录的类视图功能
     url(r'^authorizations/$', obtain_jwt_token),
 
-
+    #用户登录信息
+    url(r'^user/$',views.UserDetaView.as_view()),
+    # 添加邮箱
+    url(r'^email/$',views.EmailView.as_view())
 ]

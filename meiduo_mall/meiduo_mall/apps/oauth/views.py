@@ -6,6 +6,18 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .utils import QAuthQQ
 
+# url(r'^qq/user/$', views.QQAuthUserView.as_view()),
+class QQAuthUserView(APIView):
+  """⽤户扫码登录的回调处理"""
+  def get(self, request):
+      # 提取code请求参数
+      # 使⽤code向QQ服务器请求access_token
+      # 使⽤access_token向QQ服务器请求openid
+      # 使⽤openid查询该QQ⽤户是否在美多商城中绑定过⽤户
+      # 如果openid已绑定美多商城⽤户，直接⽣成JWT token，并返回
+      # 如果openid没绑定美多商城⽤户，创建⽤户并绑定到openid
+
+      pass
 class QQAutURLView(APIView):
     """提供QQ登录页面网址视图
     重要提示：在视图中书写业务逻辑，而不书写怎样获得login_url的具体过程

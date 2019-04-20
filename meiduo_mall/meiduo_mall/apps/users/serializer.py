@@ -4,9 +4,63 @@ from rest_framework_jwt.settings import api_settings
 from django_redis import get_redis_connection
 from rest_framework import serializers
 from .models import User
+from meiduo_mall.celery_tasks.email.tasks import send_email
+from . import models
+class UserDetaSerializer(serializers.ModelSerializer):
+    """用户的基本信息序列化器"""
+
+    class Meta:
+        model = User
+        fields = ['id','username', 'mobile','email','email_active']
+
+# 定义邮箱序列化器
+class EmailSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        # 指定需要接收和响应的所有字段
+        fields= ['id','email']
+        #因为email 字段在模型类定义时，可以为空，
+        # 所以在序列化映射时，是非必传的，所以要重新指定email为必传
+        extra_kwargs={
+            # 指定email为必传字段
+            'email':{
+                'required': True
+            }
+        }
+
+        def update(self,instance,validated_data):
+            """
+            重写序列化器的更新数据的方法
+            1.用于指定的更新某些字段，因为put方法是全字段更新
+            2.用于在此处发送邮件，在保存之后，响应之前
+            :param instance: 外界传入的要更新的user对象
+            :param validated_data: 已经校验后，准备更新某些字段的内容
+
+            :return:返回修改后的user对象
+            """
+            # 修改email字段
+            instance.email = validated_data.get('email')
+            instance.save()
+
+            # 生成激活链接,将生成链接的方法封装，写到用户模型类中，
+            # 主要是方便获得用户的id,将此方法定义成实例方法，
+            #可以直接用实力对象调用
+            #instance 就是user对象
+            verify_url = instance.generate_verify_email_url()
+
+            # 触发发送邮件异步任务，在保存之后，响应之前
+            # 必须调用delay，去触发异步任务
+            send_email.delay(instance.email,'激活链接')
+
+            return instance
+
+
+
+
+
+
 # 创建用户注册的序列化器
-
-
 
 class CreateUserSerializer(serializers.ModelSerializer):
     """

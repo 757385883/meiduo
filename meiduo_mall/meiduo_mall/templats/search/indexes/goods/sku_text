@@ -1,0 +1,6 @@
+{{ object.name }}
+{{ object.caption }}
+{{ object.id }}
+
+
+在这里指定text可以接收搜索的字段

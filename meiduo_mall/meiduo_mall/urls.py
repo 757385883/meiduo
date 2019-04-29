@@ -27,4 +27,6 @@ urlpatterns = [
 #qq 第三发登录
     url(r'^oauth/', include('oauth.urls')),
 
+    url(r'^',include('carts.urls')),
+
 ]

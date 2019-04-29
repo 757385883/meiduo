@@ -2,6 +2,23 @@ from rest_framework.filters import OrderingFilter
 from rest_framework.generics import ListAPIView
 from .models import SKU
 from . import serializers
+
+from drf_haystack.viewsets import HaystackViewSet
+
+class SKUSearchViewSet(HaystackViewSet):
+    """
+    SKU搜索, 视图集
+    """
+    # 相当于指定查询集
+    index_models = [SKU]
+
+    serializer_class = serializers.SKUIndexSerializer
+
+
+
+
+
+
 class SKUListView(ListAPIView):
     """
     商品显示列表，ListAPIView 序列化返回列表数据

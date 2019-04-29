@@ -7,10 +7,60 @@ from rest_framework.permissions import IsAuthenticated
 
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_jwt.views import ObtainJSONWebToken
 
+from meiduo_mall.meiduo_mall.apps.carts.utils import merge_cart_cookie_to_redis
 from .models import User
 from . import serializer
+
+class UserAuthorizeView(ObtainJSONWebToken):
+    """重写登录认证中的post方法：为了在登录认证过程中，保留原有的逻辑不变。
+    ，添加合并购物车方法
+        def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+
+        if serializer.is_valid():
+            user = serializer.object.get('user') or request.user
+            token = serializer.object.get('token')
+            response_data = jwt_response_payload_handler(token, user, request)
+            response = Response(response_data)
+            if api_settings.JWT_AUTH_COOKIE:
+                expiration = (datetime.utcnow() +
+                              api_settings.JWT_EXPIRATION_DELTA)
+                response.set_cookie(api_settings.JWT_AUTH_COOKIE,
+                                    token,
+                                    expires=expiration,
+                                    httponly=True)
+            return response
+"""
+    # 保留原有的账号登录逻辑不变
+    def post(self, request, *args, **kwargs):
+        response=super(UserAuthorizeView, self).post(request, *args, **kwargs)
+
+        # 获取验证之后的user对象
+        serializer = self.get_serializer(data=request.data)
+
+        if serializer.is_valid():
+            user = serializer.object.get('user') or request.user
+    # 合并购物车
+            response =merge_cart_cookie_to_redis(request=request,user= user ,response=response)
+
+        return response
+
+
+
+
+
+
+
+
+
 class VerifyEmailView(APIView):
+
+
+
+
+
     """验证邮箱的本质就是，查询用户，把用户的email_active字段修改为ture
 
     目的：1.用户点击激活连接后，发送请求；
